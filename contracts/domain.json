@@ -1,0 +1,27 @@
+{
+  "service": "coffee-cultivar-benefit-ledger",
+  "entities": [
+    "cultivar_license",
+    "nursery_lot",
+    "coffee_lot",
+    "benefit_settlement"
+  ],
+  "events": [
+    "LICENSE_GRANTED",
+    "SEEDLING_TRANSFERRED",
+    "LOT_GRADED",
+    "PREMIUM_FROZEN",
+    "SETTLEMENT_POSTED"
+  ],
+  "envelope": {
+    "required": [
+      "event_id",
+      "event_type",
+      "occurred_at",
+      "aggregate_id",
+      "version",
+      "payload"
+    ],
+    "version_minimum": 1
+  }
+}
