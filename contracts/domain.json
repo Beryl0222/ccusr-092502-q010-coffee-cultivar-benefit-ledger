@@ -1,18 +1,58 @@
 {
   "service": "coffee-cultivar-benefit-ledger",
-  "entities": [
+  "aggregates": [
+    "cultivar_version",
     "cultivar_license",
-    "nursery_lot",
-    "coffee_lot",
-    "benefit_settlement"
+    "nursery_batch",
+    "seedling_transfer",
+    "plot",
+    "farming_record",
+    "cherry_lot",
+    "cherry_move",
+    "inspection",
+    "sale_batch",
+    "allocation_rules",
+    "allocation_run",
+    "settlement",
+    "membership",
+    "dispute"
   ],
   "events": [
+    "CULTIVAR_VERSION_REGISTERED",
     "LICENSE_GRANTED",
+    "LICENSE_SCOPE_AMENDED",
+    "NURSERY_BATCH_CREATED",
     "SEEDLING_TRANSFERRED",
+    "PLOT_PLANTED",
+    "FARMING_RECORDED",
+    "GREEN_COMPLIANCE_VERIFIED",
+    "MEMBERSHIP_CHANGED",
+    "CHERRY_HARVESTED",
+    "CHERRY_LOT_SPLIT",
+    "CHERRY_LOT_MERGED",
+    "CHERRY_DELIVERED",
     "LOT_GRADED",
+    "GRADE_REVIEWED",
+    "CULTIVAR_CORRECTED",
+    "DISPUTE_OPENED",
+    "DISPUTE_RESOLVED",
     "PREMIUM_FROZEN",
-    "SETTLEMENT_POSTED"
+    "ALLOCATION_RULES_SET",
+    "PREMIUM_ALLOCATION_PROPOSED",
+    "SETTLEMENT_POSTED",
+    "SETTLEMENT_PAID",
+    "SETTLEMENT_ADJUSTMENT_POSTED",
+    "MANUAL_SHARE_ADJUSTED"
   ],
+  "roles": {
+    "LICENSOR": "良种授权人：登记品种版本、签发与修订授权，不得代签检验或结算",
+    "INSPECTOR": "检验员：鲜果定级与复核，不得代签授权或结算",
+    "SETTLEMENT_CLERK": "结算人：冻结复核、提案过账、付款登记、人工调整，不得代签授权或检验",
+    "ALLIANCE_ADMIN": "联盟管理员：品种纠错登记、合作社资格变更、争议裁决",
+    "NURSERY": "苗圃：繁育批次与种苗交接",
+    "FARMER": "农户：地块实种、农事记录与鲜果交付",
+    "PROCESSOR": "加工厂/仓口：接收入仓与销售批次冻结"
+  },
   "envelope": {
     "required": [
       "event_id",
@@ -22,6 +62,32 @@
       "version",
       "payload"
     ],
-    "version_minimum": 1
-  }
+    "optional": [
+      "actor",
+      "causation_id",
+      "idempotency_key"
+    ],
+    "version_minimum": 1,
+    "actor": {
+      "required": ["actor_id", "roles"],
+      "note": "actor 描述签发人；敏感事件按 roles 分权，同一 actor_id 曾用角色被持久化，跨角色代签将被拒绝"
+    }
+  },
+  "units": {
+    "seedlings": "株（整数）",
+    "cherry_weight": "克（整数），拆分、混批、入仓逐地块成分守恒",
+    "money": "分（整数），分配总额与冻结池按分守恒，尾差走最大余数法"
+  },
+  "invariants": [
+    "事件只增不改：品种纠错、检验复核、资格变更一律以新版本事件表达；SETTLEMENT_POSTED 与 SETTLEMENT_PAID 事实永不删除或原地改写，差额另立 SETTLEMENT_ADJUSTMENT_POSTED。",
+    "数量守恒：拆分各子批按地块成分求和等于父批；混批产出成分等于各投入之和；入仓量等于各投入鲜果批之和；累计出苗量不得超过授权株数与苗圃批次产量；地块实种不得超过该农户接收到的种苗。",
+    "收购回执幂等：同一 receipt_id 重送只返回首次 CHERRY_HARVESTED，不新增采收、不重复进入结算。",
+    "分权：LICENSE_GRANTED/LICENSE_SCOPE_AMENDED 仅 LICENSOR，LOT_GRADED/GRADE_REVIEWED 仅 INSPECTOR，SETTLEMENT_*、PREMIUM_ALLOCATION_PROPOSED、MANUAL_SHARE_ADJUSTED 仅 SETTLEMENT_CLERK；同一自然人 actor_id 已行使其中一类职权后，不得再行使另外两类。",
+    "MANUAL_SHARE_ADJUSTED 必须携带非空理由；任一销售批次冻结池的累计净分配（含结算、差额调整、人工调整、品种权分成）永远不超过冻结溢价，池余额不得为负。",
+    "溢价合格量同时满足：地块当前品种版本在交付时点处于授权范围与授权期限内、绿色技术核验通过、交付时点合作社资格有效、鲜果批次无未决争议；等级以最新检验版本的权重参与分配。",
+    "绿色断链、品种不符等争议未决期间，相关数量不进入待结算提案；DISPUTE_RESOLVED 后按裁决补发（正差额）或冲回（负差额）。",
+    "提案必须内嵌完整分配依据：交付事件、鲜果谱系、检验版本、绿色核验事件、品种/授权版本、资格状态、规则版本与加权克数，使每一分溢价可回溯。",
+    "农户接口只能看到本人地块、本人交付、本人检验版本与本人结算依据，任何他人分配行不得出现在视图中。",
+    "日志为 append-only JSONL；重放后待结算提案与未决争议完整重建，进程中断不丢已接收事实、不重复过账。"
+  ]
 }
