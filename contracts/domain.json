@@ -1,18 +1,52 @@
 {
   "service": "coffee-cultivar-benefit-ledger",
   "entities": [
+    "party",
+    "cultivar_version",
     "cultivar_license",
     "nursery_lot",
+    "seedling_transfer",
+    "field_plot",
     "coffee_lot",
-    "benefit_settlement"
+    "inspection",
+    "sale_window",
+    "settlement_rule",
+    "benefit_settlement",
+    "dispute"
   ],
   "events": [
+    "PARTY_REGISTERED",
+    "CULTIVAR_REGISTERED",
     "LICENSE_GRANTED",
+    "LICENSE_AMENDED",
+    "NURSERY_LOT_ESTABLISHED",
     "SEEDLING_TRANSFERRED",
+    "PLOT_PLANTED",
+    "GREEN_PRACTICE_RECORDED",
+    "CHERRY_DELIVERED",
+    "LOT_SPLIT",
+    "LOT_MERGED",
+    "LOT_TRANSFORMED",
     "LOT_GRADED",
+    "GRADE_REVISED",
+    "CULTIVAR_CORRECTED",
+    "MEMBERSHIP_CHANGED",
+    "SALE_WINDOW_OPENED",
     "PREMIUM_FROZEN",
-    "SETTLEMENT_POSTED"
+    "SETTLEMENT_RULE_PUBLISHED",
+    "SETTLEMENT_POSTED",
+    "SETTLEMENT_REVISED",
+    "SETTLEMENT_ADJUSTED",
+    "SETTLEMENT_PAID",
+    "DISPUTE_OPENED",
+    "DISPUTE_RESOLVED"
   ],
+  "duty_roles": [
+    "LICENSOR",
+    "INSPECTOR",
+    "SETTLER"
+  ],
+  "duty_role_separation": "良种授权人、检验员、结算人三类职务由不同主体担任，事件签名只能由对应职务主体做出",
   "envelope": {
     "required": [
       "event_id",
@@ -22,6 +56,17 @@
       "version",
       "payload"
     ],
-    "version_minimum": 1
-  }
+    "version_minimum": 1,
+    "version_rule": "同一 aggregate_id 下 version 从 1 连续递增；业务更正不回写旧事件，而是追加新版本事件"
+  },
+  "invariants": [
+    "event_id 全局唯一，同一事件重送幂等忽略",
+    "收购回执号全局唯一；同一回执已结算千克累计不得超过其交付千克，重送结算请求幂等不重复入账",
+    "拆分/混批同计量单位数量守恒，且支取量不得超过批次余量",
+    "累计分配（含版本差额与人工调整）不得超过冻结的销售溢价",
+    "已交付与已付款事实不可删除，纠错/复核/资格变更以差额版本表达",
+    "人工调整必须填写理由，且调整后分配合计不能超过冻结的销售溢价",
+    "重算后新应得低于已付时不删除付款事实，负差额计入待追回；不存在未追回超付时不得继续追加付款",
+    "结算单存在未裁决争议期间暂停付款"
+  ]
 }

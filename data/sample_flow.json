@@ -1,0 +1,907 @@
+{
+  "说明": "咖啡良种权益分配账端到端联调样例：品种→授权→繁育→交接→地块→绿色农事→交付→混批/加工/拆分（数量守恒）→检验→冻结→结算→付款→复核差额→争议。events 为仅追加事件流，其余为重放得到的读模型。",
+  "events": [
+    {
+      "event_id": "e-breeder",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-breeder-1",
+      "version": 1,
+      "payload": {
+        "party_id": "breeder-1",
+        "name": "热作所",
+        "roles": [
+          "BREEDER"
+        ],
+        "duties": [
+          "LICENSOR"
+        ]
+      }
+    },
+    {
+      "event_id": "e-nursery",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-nursery-1",
+      "version": 1,
+      "payload": {
+        "party_id": "nursery-1",
+        "name": "绿洲苗圃",
+        "roles": [
+          "NURSERY"
+        ],
+        "duties": []
+      }
+    },
+    {
+      "event_id": "e-farmer-a",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-farmer-a",
+      "version": 1,
+      "payload": {
+        "party_id": "farmer-a",
+        "name": "岩温",
+        "roles": [
+          "FARMER"
+        ],
+        "duties": []
+      }
+    },
+    {
+      "event_id": "e-farmer-b",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-farmer-b",
+      "version": 1,
+      "payload": {
+        "party_id": "farmer-b",
+        "name": "玉应",
+        "roles": [
+          "FARMER"
+        ],
+        "duties": []
+      }
+    },
+    {
+      "event_id": "e-coop",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-coop-1",
+      "version": 1,
+      "payload": {
+        "party_id": "coop-1",
+        "name": "合作社",
+        "roles": [
+          "COOPERATIVE"
+        ],
+        "duties": []
+      }
+    },
+    {
+      "event_id": "e-brand",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-brand-1",
+      "version": 1,
+      "payload": {
+        "party_id": "brand-1",
+        "name": "品牌方",
+        "roles": [
+          "BRAND"
+        ],
+        "duties": []
+      }
+    },
+    {
+      "event_id": "e-inspector",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-inspector-1",
+      "version": 1,
+      "payload": {
+        "party_id": "inspector-1",
+        "name": "质检员",
+        "roles": [
+          "ALLIANCE"
+        ],
+        "duties": [
+          "INSPECTOR"
+        ]
+      }
+    },
+    {
+      "event_id": "e-settler",
+      "event_type": "PARTY_REGISTERED",
+      "occurred_at": "2026-09-01T09:00:00+08:00",
+      "aggregate_id": "party-settler-1",
+      "version": 1,
+      "payload": {
+        "party_id": "settler-1",
+        "name": "结算员",
+        "roles": [
+          "ALLIANCE"
+        ],
+        "duties": [
+          "SETTLER"
+        ]
+      }
+    },
+    {
+      "event_id": "e-cv",
+      "event_type": "CULTIVAR_REGISTERED",
+      "occurred_at": "2026-09-02T09:00:00+08:00",
+      "aggregate_id": "cultivar-YUNKA-1",
+      "version": 1,
+      "payload": {
+        "cultivar_id": "YUNKA-1",
+        "version": "v1",
+        "breeder_id": "breeder-1",
+        "name": "云咖1号",
+        "green_requirements": [
+          "SHADE_TREE",
+          "ORGANIC_FERTILIZER"
+        ]
+      }
+    },
+    {
+      "event_id": "e-lic",
+      "event_type": "LICENSE_GRANTED",
+      "occurred_at": "2026-09-02T09:00:00+08:00",
+      "aggregate_id": "license-license-1",
+      "version": 1,
+      "payload": {
+        "license_id": "license-1",
+        "cultivar_id": "YUNKA-1",
+        "cultivar_version": "v1",
+        "licensor_id": "breeder-1",
+        "nursery_id": "nursery-1",
+        "scope": {
+          "region": "普洱"
+        }
+      }
+    },
+    {
+      "event_id": "e-nl",
+      "event_type": "NURSERY_LOT_ESTABLISHED",
+      "occurred_at": "2026-09-03T09:00:00+08:00",
+      "aggregate_id": "nursery-lot-nlot-1",
+      "version": 1,
+      "payload": {
+        "nursery_lot_id": "nlot-1",
+        "nursery_id": "nursery-1",
+        "license_id": "license-1",
+        "cultivar_id": "YUNKA-1",
+        "cultivar_version": "v1",
+        "quantity_seedlings": "100000.000"
+      }
+    },
+    {
+      "event_id": "e-tr1",
+      "event_type": "SEEDLING_TRANSFERRED",
+      "occurred_at": "2026-09-04T09:00:00+08:00",
+      "aggregate_id": "transfer-transfer-1",
+      "version": 1,
+      "payload": {
+        "transfer_id": "transfer-1",
+        "nursery_lot_id": "nlot-1",
+        "from_nursery": "nursery-1",
+        "to_farmer": "farmer-a",
+        "to_plot_id": "plot-a",
+        "quantity_seedlings": "3000.000",
+        "transferred_at": "2026-09-04T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-tr2",
+      "event_type": "SEEDLING_TRANSFERRED",
+      "occurred_at": "2026-09-04T09:00:00+08:00",
+      "aggregate_id": "transfer-transfer-2",
+      "version": 1,
+      "payload": {
+        "transfer_id": "transfer-2",
+        "nursery_lot_id": "nlot-1",
+        "from_nursery": "nursery-1",
+        "to_farmer": "farmer-b",
+        "to_plot_id": "plot-b",
+        "quantity_seedlings": "2500.000",
+        "transferred_at": "2026-09-04T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-pl1",
+      "event_type": "PLOT_PLANTED",
+      "occurred_at": "2026-09-05T09:00:00+08:00",
+      "aggregate_id": "plot-plot-a",
+      "version": 1,
+      "payload": {
+        "plot_id": "plot-a",
+        "farmer_id": "farmer-a",
+        "coop_id": "coop-1",
+        "transfer_id": "transfer-1",
+        "cultivar_id": "YUNKA-1",
+        "cultivar_version": "v1",
+        "seedlings": "3000.000",
+        "planted_at": "2026-09-05T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-pl2",
+      "event_type": "PLOT_PLANTED",
+      "occurred_at": "2026-09-05T09:00:00+08:00",
+      "aggregate_id": "plot-plot-b",
+      "version": 1,
+      "payload": {
+        "plot_id": "plot-b",
+        "farmer_id": "farmer-b",
+        "coop_id": "coop-1",
+        "transfer_id": "transfer-2",
+        "cultivar_id": "YUNKA-1",
+        "cultivar_version": "v1",
+        "seedlings": "2500.000",
+        "planted_at": "2026-09-05T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-gp1",
+      "event_type": "GREEN_PRACTICE_RECORDED",
+      "occurred_at": "2026-09-10T09:00:00+08:00",
+      "aggregate_id": "plot-plot-a",
+      "version": 2,
+      "payload": {
+        "plot_id": "plot-a",
+        "practice_code": "SHADE_TREE",
+        "recorder_id": "coop-1",
+        "observed_at": "2026-09-10T09:00:00+08:00",
+        "evidence_ref": "ev1"
+      }
+    },
+    {
+      "event_id": "e-gp2",
+      "event_type": "GREEN_PRACTICE_RECORDED",
+      "occurred_at": "2026-09-10T09:00:00+08:00",
+      "aggregate_id": "plot-plot-a",
+      "version": 3,
+      "payload": {
+        "plot_id": "plot-a",
+        "practice_code": "ORGANIC_FERTILIZER",
+        "recorder_id": "coop-1",
+        "observed_at": "2026-09-10T09:00:00+08:00",
+        "evidence_ref": "ev2"
+      }
+    },
+    {
+      "event_id": "e-gp3",
+      "event_type": "GREEN_PRACTICE_RECORDED",
+      "occurred_at": "2026-09-10T09:00:00+08:00",
+      "aggregate_id": "plot-plot-b",
+      "version": 2,
+      "payload": {
+        "plot_id": "plot-b",
+        "practice_code": "SHADE_TREE",
+        "recorder_id": "coop-1",
+        "observed_at": "2026-09-10T09:00:00+08:00",
+        "evidence_ref": "ev3"
+      }
+    },
+    {
+      "event_id": "e-d1",
+      "event_type": "CHERRY_DELIVERED",
+      "occurred_at": "2026-09-20T09:00:00+08:00",
+      "aggregate_id": "receipt-R-001",
+      "version": 1,
+      "payload": {
+        "receipt_no": "R-001",
+        "plot_id": "plot-a",
+        "farmer_id": "farmer-a",
+        "buy_lot_id": "buy-1",
+        "quantity_kg": "1000.000",
+        "delivered_at": "2026-09-20T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-d2",
+      "event_type": "CHERRY_DELIVERED",
+      "occurred_at": "2026-09-20T09:00:00+08:00",
+      "aggregate_id": "receipt-R-002",
+      "version": 1,
+      "payload": {
+        "receipt_no": "R-002",
+        "plot_id": "plot-b",
+        "farmer_id": "farmer-b",
+        "buy_lot_id": "buy-1",
+        "quantity_kg": "600.000",
+        "delivered_at": "2026-09-20T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-m1",
+      "event_type": "LOT_MERGED",
+      "occurred_at": "2026-09-21T09:00:00+08:00",
+      "aggregate_id": "flow-buy-1-washed",
+      "version": 1,
+      "payload": {
+        "flow_kind": "MERGE",
+        "sources": [
+          {
+            "lot_id": "buy-1",
+            "quantity_kg": "1600.000"
+          }
+        ],
+        "sinks": [
+          {
+            "lot_id": "washed",
+            "quantity_kg": "1600.000"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "e-t1",
+      "event_type": "LOT_TRANSFORMED",
+      "occurred_at": "2026-09-22T09:00:00+08:00",
+      "aggregate_id": "flow-green-washed",
+      "version": 1,
+      "payload": {
+        "flow_kind": "TRANSFORM",
+        "sources": [
+          {
+            "lot_id": "washed",
+            "quantity_kg": "1600.000"
+          }
+        ],
+        "sinks": [
+          {
+            "lot_id": "green",
+            "quantity_kg": "1280.000"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "e-s1",
+      "event_type": "LOT_SPLIT",
+      "occurred_at": "2026-09-23T09:00:00+08:00",
+      "aggregate_id": "flow-green-sale-a-sale-special",
+      "version": 1,
+      "payload": {
+        "flow_kind": "SPLIT",
+        "sources": [
+          {
+            "lot_id": "green",
+            "quantity_kg": "1280.000"
+          }
+        ],
+        "sinks": [
+          {
+            "lot_id": "sale-special",
+            "quantity_kg": "900.000"
+          },
+          {
+            "lot_id": "sale-a",
+            "quantity_kg": "380.000"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "e-g1",
+      "event_type": "LOT_GRADED",
+      "occurred_at": "2026-09-24T09:00:00+08:00",
+      "aggregate_id": "inspection-insp-1",
+      "version": 1,
+      "payload": {
+        "inspection_id": "insp-1",
+        "lot_id": "sale-special",
+        "grade": "SPECIAL",
+        "inspector_id": "inspector-1",
+        "notes": ""
+      }
+    },
+    {
+      "event_id": "e-g2",
+      "event_type": "LOT_GRADED",
+      "occurred_at": "2026-09-24T09:00:00+08:00",
+      "aggregate_id": "inspection-insp-2",
+      "version": 1,
+      "payload": {
+        "inspection_id": "insp-2",
+        "lot_id": "sale-a",
+        "grade": "GRADE_A",
+        "inspector_id": "inspector-1",
+        "notes": ""
+      }
+    },
+    {
+      "event_id": "e-rule",
+      "event_type": "SETTLEMENT_RULE_PUBLISHED",
+      "occurred_at": "2026-09-25T09:00:00+08:00",
+      "aggregate_id": "rule-rule-1",
+      "version": 1,
+      "payload": {
+        "rule_id": "rule-1",
+        "version": 1,
+        "shares": {
+          "FARMER": "0.70",
+          "COOPERATIVE": "0.10",
+          "BREEDER": "0.12",
+          "NURSERY": "0.08"
+        },
+        "grade_rates": {
+          "SPECIAL": "1.0",
+          "GRADE_A": "0.6",
+          "REJECT": "0"
+        },
+        "required_practices": [
+          "SHADE_TREE",
+          "ORGANIC_FERTILIZER"
+        ],
+        "green_penalty": "0.5",
+        "notes": ""
+      }
+    },
+    {
+      "event_id": "e-win",
+      "event_type": "SALE_WINDOW_OPENED",
+      "occurred_at": "2026-09-26T09:00:00+08:00",
+      "aggregate_id": "window-window-1",
+      "version": 1,
+      "payload": {
+        "window_id": "window-1",
+        "brand_id": "brand-1",
+        "mill_id": null,
+        "rule_id": "rule-1",
+        "opened_at": "2026-09-26T09:00:00+08:00"
+      }
+    },
+    {
+      "event_id": "e-frz",
+      "event_type": "PREMIUM_FROZEN",
+      "occurred_at": "2026-09-27T09:00:00+08:00",
+      "aggregate_id": "window-window-1",
+      "version": 2,
+      "payload": {
+        "window_id": "window-1",
+        "lots": [
+          {
+            "lot_id": "sale-special",
+            "quantity_kg": "900.000"
+          },
+          {
+            "lot_id": "sale-a",
+            "quantity_kg": "380.000"
+          }
+        ],
+        "premium_per_kg": "4.00",
+        "frozen_total": "5120.00",
+        "frozen_at": "2026-09-27T09:00:00+08:00",
+        "currency": "CNY"
+      }
+    },
+    {
+      "event_id": "x-s1",
+      "event_type": "SETTLEMENT_POSTED",
+      "occurred_at": "2026-09-28T09:00:00+08:00",
+      "aggregate_id": "settlement-ST-2026-001",
+      "version": 1,
+      "payload": {
+        "settlement_id": "ST-2026-001",
+        "window_id": "window-1",
+        "rule_id": "rule-1",
+        "rule_version": 1,
+        "lines": [
+          {
+            "beneficiary_id": "breeder-1",
+            "role": "BREEDER",
+            "amount": "439.92",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "coop-1",
+            "role": "COOPERATIVE",
+            "amount": "366.60",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "farmer-a",
+            "role": "FARMER",
+            "amount": "1974.00",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "farmer-b",
+            "role": "FARMER",
+            "amount": "592.20",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "nursery-1",
+            "role": "NURSERY",
+            "amount": "293.28",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "RESERVE",
+            "role": "RESERVE",
+            "amount": "1454.00",
+            "basis": [
+              {
+                "window_id": "window-1",
+                "reason": "未达等级/绿色扣减/舍入结余，代管待退品牌"
+              }
+            ]
+          }
+        ],
+        "total": "5120.00",
+        "receipts": [
+          {
+            "receipt_no": "R-001",
+            "quantity_kg": "237.500",
+            "grade": "GRADE_A",
+            "inspection_id": "insp-2",
+            "grade_rate": "0.6",
+            "green_complete": true,
+            "green_factor": "1",
+            "cultivar_id": "YUNKA-1",
+            "cultivar_version": "v1",
+            "raw_premium": "570.00",
+            "earned_premium": "570.00",
+            "farmer_id": "farmer-a",
+            "coop_id": "coop-1",
+            "plot_id": "plot-a"
+          },
+          {
+            "receipt_no": "R-001",
+            "quantity_kg": "562.500",
+            "grade": "SPECIAL",
+            "inspection_id": "insp-1",
+            "grade_rate": "1.0",
+            "green_complete": true,
+            "green_factor": "1",
+            "cultivar_id": "YUNKA-1",
+            "cultivar_version": "v1",
+            "raw_premium": "2250.00",
+            "earned_premium": "2250.00",
+            "farmer_id": "farmer-a",
+            "coop_id": "coop-1",
+            "plot_id": "plot-a"
+          },
+          {
+            "receipt_no": "R-002",
+            "quantity_kg": "142.500",
+            "grade": "GRADE_A",
+            "inspection_id": "insp-2",
+            "grade_rate": "0.6",
+            "green_complete": false,
+            "green_factor": "0.5",
+            "cultivar_id": "YUNKA-1",
+            "cultivar_version": "v1",
+            "raw_premium": "342.00",
+            "earned_premium": "171.00",
+            "farmer_id": "farmer-b",
+            "coop_id": "coop-1",
+            "plot_id": "plot-b"
+          },
+          {
+            "receipt_no": "R-002",
+            "quantity_kg": "337.500",
+            "grade": "SPECIAL",
+            "inspection_id": "insp-1",
+            "grade_rate": "1.0",
+            "green_complete": false,
+            "green_factor": "0.5",
+            "cultivar_id": "YUNKA-1",
+            "cultivar_version": "v1",
+            "raw_premium": "1350.00",
+            "earned_premium": "675.00",
+            "farmer_id": "farmer-b",
+            "coop_id": "coop-1",
+            "plot_id": "plot-b"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "x-pay1",
+      "event_type": "SETTLEMENT_PAID",
+      "occurred_at": "2026-09-29T09:00:00+08:00",
+      "aggregate_id": "settlement-ST-2026-001",
+      "version": 2,
+      "payload": {
+        "settlement_id": "ST-2026-001",
+        "amounts": [
+          {
+            "beneficiary_id": "farmer-a",
+            "amount": "1974.00"
+          }
+        ],
+        "paid_at": "2026-09-29T09:00:00+08:00",
+        "reference": "BANK-PAY-001"
+      }
+    },
+    {
+      "event_id": "x-gr1",
+      "event_type": "GRADE_REVISED",
+      "occurred_at": "2026-09-30T10:00:00+08:00",
+      "aggregate_id": "inspection-insp-1",
+      "version": 2,
+      "payload": {
+        "inspection_id": "insp-1",
+        "new_grade": "GRADE_A",
+        "reason": "复检杯测 83 分，special 降为一级"
+      }
+    },
+    {
+      "event_id": "x-rs1",
+      "event_type": "SETTLEMENT_REVISED",
+      "occurred_at": "2026-09-30T11:00:00+08:00",
+      "aggregate_id": "settlement-ST-2026-001",
+      "version": 3,
+      "payload": {
+        "settlement_id": "ST-2026-001",
+        "window_id": "window-1",
+        "rule_id": "rule-1",
+        "rule_version": 1,
+        "lines": [
+          {
+            "beneficiary_id": "breeder-1",
+            "role": "BREEDER",
+            "amount": "299.52",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "coop-1",
+            "role": "COOPERATIVE",
+            "amount": "249.60",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "farmer-a",
+            "role": "FARMER",
+            "amount": "1344.00",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "farmer-b",
+            "role": "FARMER",
+            "amount": "403.20",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "nursery-1",
+            "role": "NURSERY",
+            "amount": "199.68",
+            "basis": [
+              {
+                "window_id": "window-1"
+              }
+            ]
+          },
+          {
+            "beneficiary_id": "RESERVE",
+            "role": "RESERVE",
+            "amount": "2624.00",
+            "basis": [
+              {
+                "window_id": "window-1",
+                "reason": "未达等级/绿色扣减/舍入结余，代管待退品牌"
+              }
+            ]
+          }
+        ],
+        "total": "5120.00",
+        "receipts": [
+          {
+            "receipt_no": "R-001",
+            "quantity_kg": "800.000",
+            "grade": "GRADE_A",
+            "inspection_id": "insp-1",
+            "grade_rate": "0.6",
+            "green_complete": true,
+            "green_factor": "1",
+            "cultivar_id": "YUNKA-1",
+            "cultivar_version": "v1",
+            "raw_premium": "1920.00",
+            "earned_premium": "1920.00",
+            "farmer_id": "farmer-a",
+            "coop_id": "coop-1",
+            "plot_id": "plot-a"
+          },
+          {
+            "receipt_no": "R-002",
+            "quantity_kg": "480.000",
+            "grade": "GRADE_A",
+            "inspection_id": "insp-1",
+            "grade_rate": "0.6",
+            "green_complete": false,
+            "green_factor": "0.5",
+            "cultivar_id": "YUNKA-1",
+            "cultivar_version": "v1",
+            "raw_premium": "1152.00",
+            "earned_premium": "576.00",
+            "farmer_id": "farmer-b",
+            "coop_id": "coop-1",
+            "plot_id": "plot-b"
+          }
+        ],
+        "reason": "检验复核降级，按新版本计算差额",
+        "basis_versions": {
+          "rule_version": 1,
+          "grade_versions": {
+            "R-001": 2,
+            "R-002": 2
+          },
+          "overpaid": [
+            {
+              "beneficiary_id": "farmer-a",
+              "paid": "1974.00",
+              "new_amount": "1344.00",
+              "receivable": "630.00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "event_id": "x-dp1",
+      "event_type": "DISPUTE_OPENED",
+      "occurred_at": "2026-10-02T09:00:00+08:00",
+      "aggregate_id": "dispute-dispute-1",
+      "version": 1,
+      "payload": {
+        "dispute_id": "dispute-1",
+        "settlement_id": "ST-2026-001",
+        "claimant_id": "farmer-b",
+        "claim": "绿色扣减比例异议",
+        "opened_at": "2026-10-02T09:00:00+08:00"
+      }
+    }
+  ],
+  "farmer_view_farmer_a": {
+    "farmer_id": "farmer-a",
+    "coop_id": "coop-1",
+    "receipts": [
+      {
+        "receipt_no": "R-001",
+        "plot_id": "plot-a",
+        "quantity_kg": "1000.000",
+        "delivered_at": "2026-09-20T09:00:00+08:00",
+        "cultivar_version": "v1",
+        "grade": null,
+        "green_practices": [
+          "ORGANIC_FERTILIZER",
+          "SHADE_TREE"
+        ],
+        "settled_kg": "800.000"
+      }
+    ],
+    "settlements": [
+      {
+        "settlement_id": "ST-2026-001",
+        "window_id": "window-1",
+        "status": "REVISED",
+        "amount": "1344.00",
+        "paid": "1974.00",
+        "my_receipts": [
+          "R-001"
+        ],
+        "rule_version": 1
+      }
+    ]
+  },
+  "premium_trace_ST_2026_001": {
+    "settlement_id": "ST-2026-001",
+    "window_id": "window-1",
+    "frozen_event": "e-frz",
+    "posted_event": "x-s1",
+    "revision_events": [
+      "x-rs1"
+    ],
+    "premium_per_kg": "4.00",
+    "frozen_total": "5120.00",
+    "settled_total": "5120.00",
+    "rule_version": 1,
+    "frozen_lots": [
+      {
+        "lot_id": "sale-special",
+        "quantity_kg": "900.000",
+        "grade": "GRADE_A",
+        "inspection_id": "insp-1",
+        "upward_path": [
+          "green",
+          "washed",
+          "buy-1",
+          "plot-a",
+          "plot-b"
+        ],
+        "receipt_share": {
+          "R-001": "562.500",
+          "R-002": "337.500"
+        }
+      },
+      {
+        "lot_id": "sale-a",
+        "quantity_kg": "380.000",
+        "grade": "GRADE_A",
+        "inspection_id": "insp-2",
+        "upward_path": [
+          "green",
+          "washed",
+          "buy-1",
+          "plot-a",
+          "plot-b"
+        ],
+        "receipt_share": {
+          "R-001": "237.500",
+          "R-002": "142.500"
+        }
+      }
+    ],
+    "farmer_lines": [
+      {
+        "beneficiary_id": "farmer-a",
+        "amount": "1344.00"
+      },
+      {
+        "beneficiary_id": "farmer-b",
+        "amount": "403.20"
+      }
+    ],
+    "paid": {
+      "farmer-a": "1974.00"
+    }
+  },
+  "pending_work": {
+    "windows_awaiting_settlement": [],
+    "windows_awaiting_revision": [],
+    "disputes_awaiting_ruling": [
+      "dispute-1"
+    ],
+    "settlements_awaiting_payment": [],
+    "overpaid_awaiting_recovery": [
+      {
+        "settlement_id": "ST-2026-001",
+        "beneficiary_id": "farmer-a",
+        "paid": "1974.00",
+        "new_amount": "1344.00",
+        "receivable": "630.00"
+      }
+    ]
+  }
+}
